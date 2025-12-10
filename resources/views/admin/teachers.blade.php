@@ -3,66 +3,57 @@
 @section('main')
     @push('styles')
         <style>
-            .skeleton {
-                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-                background-size: 200% 100%;
-                animation: loading 1.5s infinite;
-                border-radius: 0.375rem;
+            .data-table {
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                background: white;
             }
 
-            @keyframes loading {
-                0% {
-                    background-position: 200% 0;
-                }
-
-                100% {
-                    background-position: -200% 0;
-                }
+            .table-header {
+                background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+                border-bottom: 2px solid #e5e7eb;
             }
 
-            .stat-card {
-                transition: all 0.3s ease;
+            .table-header th {
+                padding: 1rem 1.5rem;
+                font-weight: 600;
+                color: #374151;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.05em;
             }
 
-            .stat-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            .table-row {
+                transition: all 0.2s ease;
+                border-bottom: 1px solid #f3f4f6;
             }
 
-            .table-row-hover:hover {
+            .table-row:hover {
                 background-color: #f9fafb;
             }
 
-            .modal-enter {
-                animation: modalFadeIn 0.3s ease-out;
+            .teacher-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                color: white;
+                font-size: 0.875rem;
+                background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             }
 
-            @keyframes modalFadeIn {
-                from {
-                    opacity: 0;
-                    transform: scale(0.95);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-            }
-
-            .fade-in {
-                animation: fadeIn 0.5s ease-in-out;
-            }
-
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(10px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+            .status-badge {
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: 500;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
             }
 
             .status-active {
@@ -75,358 +66,218 @@
                 color: #991b1b;
             }
 
-            .status-pending {
-                background-color: #fef3c7;
-                color: #92400e;
+            .specialty-tag {
+                padding: 0.25rem 0.625rem;
+                border-radius: 6px;
+                font-size: 0.75rem;
+                font-weight: 500;
+                background-color: #eff6ff;
+                color: #1d4ed8;
             }
 
             .action-btn {
+                width: 32px;
+                height: 32px;
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 transition: all 0.2s ease;
+                color: #6b7280;
             }
 
             .action-btn:hover {
-                transform: scale(1.05);
+                background-color: #f3f4f6;
             }
 
-            .avatar-upload {
-                border: 2px dashed #d1d5db;
-                transition: all 0.3s ease;
+            .action-edit:hover {
+                color: #3b82f6;
             }
 
-            .avatar-upload:hover {
-                border-color: #3b82f6;
-                background-color: #f0f9ff;
+            .action-view:hover {
+                color: #10b981;
+            }
+
+            .action-delete:hover {
+                color: #ef4444;
+            }
+
+            .btn-new-teacher {
+                background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+                color: white;
+                padding: 0.625rem 1.25rem;
+                border-radius: 8px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+            }
+
+            .btn-new-teacher:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            }
+
+            .search-container {
+                background: white;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+            }
+
+            .search-input {
+                border: none;
+                outline: none;
+                background: transparent;
+                width: 100%;
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .pagination-btn {
+                width: 32px;
+                height: 32px;
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 500;
+                background: white;
+                border: 1px solid #e5e7eb;
+                color: #374151;
+                transition: all 0.2s;
+            }
+
+            .pagination-btn:hover:not(.active) {
+                background-color: #f9fafb;
+            }
+
+            .pagination-btn.active {
+                background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+                color: white;
+                border-color: transparent;
             }
         </style>
     @endpush
 
     <main class="p-6">
-
-
-        <!-- Stats Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Total Professores -->
-            <div class="stat-card bg-white rounded-xl p-6 shadow-sm fade-in">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">Total de Professores</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mt-1">24</h3>
-                        <p class="text-sm text-green-600 mt-2">
-                            <i class="fas fa-arrow-up mr-1"></i>
-                            8% este mês
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-chalkboard-teacher text-blue-600 text-xl"></i>
-                    </div>
+        <!-- Header com Botão -->
+        <div class="mb-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Docentes</h1>
+                    <p class="text-gray-600 mt-1">Gerencie os professores cadastrados</p>
                 </div>
-            </div>
-
-            <!-- Professores Ativos -->
-            <div class="stat-card bg-white rounded-xl p-6 shadow-sm fade-in" style="animation-delay: 0.1s">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">Professores Ativos</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mt-1">18</h3>
-                        <p class="text-sm text-green-600 mt-2">
-                            <i class="fas fa-check-circle mr-1"></i>
-                            75% do total
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-user-check text-green-600 text-xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Total Cursos -->
-            <div class="stat-card bg-white rounded-xl p-6 shadow-sm fade-in" style="animation-delay: 0.2s">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">Total de Cursos</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mt-1">42</h3>
-                        <p class="text-sm text-blue-600 mt-2">
-                            <i class="fas fa-book mr-1"></i>
-                            14 por professor
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-book-open text-purple-600 text-xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Avaliação Média -->
-            <div class="stat-card bg-white rounded-xl p-6 shadow-sm fade-in" style="animation-delay: 0.3s">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500">Avaliação Média</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mt-1">4.7</h3>
-                        <p class="text-sm text-yellow-600 mt-2">
-                            <i class="fas fa-star mr-1"></i>
-                            Excelente
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-star text-yellow-600 text-xl"></i>
-                    </div>
-                </div>
+                <a class="btn-new-teacher" href="{{ route('admin.teachers.new') }}">
+                    <i class="fas fa-plus"></i>
+                    Novo Professor
+                </a>
             </div>
         </div>
 
-        <!-- Search and Filter Section -->
-        <div class="bg-white rounded-xl border p-4 mb-6">
-            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div class="w-full md:w-auto md:flex-1">
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" placeholder="Buscar docentes por nome, especialidade ou email..."
-                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200">
-                    </div>
-                </div>
-                <div class="flex gap-3 w-full md:w-auto">
-                    <select
-                        class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                        <option value="">Todos os status</option>
-                        <option value="active">Ativo</option>
-                        <option value="inactive">Inativo</option>
-                        <option value="pending">Pendente</option>
-                    </select>
-                    <select
-                        class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                        <option value="">Todas as especialidades</option>
-                        <option value="programming">Programação</option>
-                        <option value="design">Design</option>
-                        <option value="business">Negócios</option>
-                        <option value="marketing">Marketing</option>
-                    </select>
-                </div>
+        <!-- Search -->
+        <div class="mb-6">
+            <div class="search-container max-w-xl flex items-center flex-row-reverse">
+                <button class="fas fa-search mr-3 text-gray-400"></button>
+                <input type="text" placeholder="Buscar docentes..." class="search-input ml-2" id="searchInput">
             </div>
         </div>
 
-        <!-- Teachers Table -->
-        <div class="bg-white rounded-xl border overflow-hidden fade-in">
+        <!-- Tabela Simples -->
+        <div class="data-table">
             <div class="overflow-x-auto">
                 <table class="w-full">
-                    <thead class="bg-gray-50">
+                    <thead class="table-header">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" class="rounded border-gray-300">
-                                    <span>Docente</span>
-                                </div>
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Especialidade
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Cursos
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Avaliação
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Status
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Ações
-                            </th>
+                            <th class="px-6 py-4 text-left">Docente</th>
+                            <th class="px-6 py-4 text-left">Especialidade</th>
+                            <th class="px-6 py-4 text-left">Vídeos</th>
+                            <th class="px-6 py-4 text-left">Status</th>
+                            <th class="px-6 py-4 text-left">Ações</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        <!-- Teacher 1 -->
-                        <tr class="table-row-hover hover:bg-gray-50 transition-colors duration-150">
+                    <tbody>
+                        <!-- Linha 1 -->
+                        <tr class="table-row">
                             <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="rounded border-gray-300 mr-3">
-                                    <div
-                                        class="flex-shrink-0 h-10 w-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                <div class="flex items-center gap-3">
+                                    <div class="teacher-avatar">
                                         CS
                                     </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">Carlos Silva</div>
-                                        <div class="text-sm text-gray-500">carlos.silva@exemplo.com</div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">Carlos Silva</p>
+                                        <p class="text-sm text-gray-500">carlos.silva@exemplo.com</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">Programação</span>
-                                    <span class="px-2 py-1 text-xs rounded bg-purple-100 text-purple-800">JavaScript</span>
-                                </div>
+                                <span class="specialty-tag">
+                                    Língua Inglesa
+                                </span>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <span class="text-sm font-medium text-gray-900">8 cursos</span>
-                                    <span class="text-xs text-gray-500 ml-2">156 vídeos</span>
-                                </div>
+                                <span class="font-medium text-gray-900">8 vídeos</span>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="flex">
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="fas fa-star-half-alt text-yellow-400 text-sm"></i>
-                                    </div>
-                                    <span class="text-sm text-gray-600 ml-2">4.8</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="px-3 py-1 text-xs rounded-full font-medium status-active">
-                                    <i class="fas fa-circle mr-1 text-xs"></i>
+                                <span class="status-badge status-active">
+                                    <i class="fas fa-circle text-xs"></i>
                                     Ativo
                                 </span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
-                                    <button
-                                        class="action-btn p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-150"
-                                        title="Editar">
+                                    <button class="action-btn action-edit" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button
-                                        class="action-btn p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-150"
-                                        title="Ver perfil">
+                                    <button class="action-btn action-view" title="Visualizar">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button
-                                        class="action-btn p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-150"
-                                        title="Desativar">
+                                    <button class="action-btn action-delete" title="Desativar">
                                         <i class="fas fa-user-slash"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
 
-                        <!-- Teacher 2 -->
-                        <tr class="table-row-hover hover:bg-gray-50 transition-colors duration-150">
+                        <!-- Linha 2 -->
+                        <tr class="table-row">
                             <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="rounded border-gray-300 mr-3">
-                                    <div
-                                        class="flex-shrink-0 h-10 w-10 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                        AS
+                                <div class="flex items-center gap-3">
+                                    <div class="teacher-avatar"
+                                        style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                                        MS
                                     </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">Ana Santos</div>
-                                        <div class="text-sm text-gray-500">ana.santos@exemplo.com</div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">Maria Santos</p>
+                                        <p class="text-sm text-gray-500">maria.santos@exemplo.com</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Design</span>
-                                    <span class="px-2 py-1 text-xs rounded bg-pink-100 text-pink-800">UI/UX</span>
-                                </div>
+                                <span class="specialty-tag" style="background-color: #f3e8ff; color: #7c3aed;">
+                                    Programação
+                                </span>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <span class="text-sm font-medium text-gray-900">6 cursos</span>
-                                    <span class="text-xs text-gray-500 ml-2">98 vídeos</span>
-                                </div>
+                                <span class="font-medium text-gray-900">12 vídeos</span>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="flex">
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                    </div>
-                                    <span class="text-sm text-gray-600 ml-2">5.0</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="px-3 py-1 text-xs rounded-full font-medium status-active">
-                                    <i class="fas fa-circle mr-1 text-xs"></i>
-                                    Ativo
+                                <span class="status-badge status-inactive">
+                                    <i class="fas fa-circle text-xs"></i>
+                                    Inativo
                                 </span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
-                                    <button
-                                        class="action-btn p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-150"
-                                        title="Editar">
+                                    <button class="action-btn action-edit" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button
-                                        class="action-btn p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-150"
-                                        title="Ver perfil">
+                                    <button class="action-btn action-view" title="Visualizar">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button
-                                        class="action-btn p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-150"
-                                        title="Desativar">
-                                        <i class="fas fa-user-slash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Teacher 3 -->
-                        <tr class="table-row-hover hover:bg-gray-50 transition-colors duration-150">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="rounded border-gray-300 mr-3">
-                                    <div
-                                        class="flex-shrink-0 h-10 w-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                        RM
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">Ricardo Mendes</div>
-                                        <div class="text-sm text-gray-500">ricardo.mendes@exemplo.com</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="px-2 py-1 text-xs rounded bg-red-100 text-red-800">Marketing</span>
-                                    <span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-800">SEO</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <span class="text-sm font-medium text-gray-900">4 cursos</span>
-                                    <span class="text-xs text-gray-500 ml-2">72 vídeos</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="flex">
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
-                                        <i class="far fa-star text-gray-300 text-sm"></i>
-                                    </div>
-                                    <span class="text-sm text-gray-600 ml-2">4.0</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="px-3 py-1 text-xs rounded-full font-medium status-pending">
-                                    <i class="fas fa-clock mr-1 text-xs"></i>
-                                    Pendente
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <button
-                                        class="action-btn p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-150"
-                                        title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button
-                                        class="action-btn p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-150"
-                                        title="Ver perfil">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button
-                                        class="action-btn p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors duration-150"
-                                        title="Aprovar">
-                                        <i class="fas fa-check"></i>
+                                    <button class="action-btn action-delete" title="Ativar">
+                                        <i class="fas fa-user-check"></i>
                                     </button>
                                 </div>
                             </td>
@@ -435,34 +286,14 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
+            <!-- Paginação Simples -->
             <div class="px-6 py-4 border-t border-gray-200">
                 <div class="flex items-center justify-between">
                     <div class="text-sm text-gray-700">
-                        Mostrando <span class="font-medium">1</span> a <span class="font-medium">3</span> de <span
-                            class="font-medium">24</span> resultados
+                        2 docentes encontrados
                     </div>
                     <div class="flex items-center gap-2">
-                        <button
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled>
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-                            1
-                        </button>
-                        <button
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            2
-                        </button>
-                        <button
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            3
-                        </button>
-                        <button
-                            class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
+                        <button class="pagination-btn active">1</button>
                     </div>
                 </div>
             </div>
@@ -471,11 +302,11 @@
 
     @push('scripts')
         <script>
-            // Search functionality
-            const searchInput = document.querySelector('input[type="text"]');
+            // Busca simples
+            const searchInput = document.getElementById('searchInput');
             searchInput.addEventListener('input', function(e) {
                 const searchTerm = e.target.value.toLowerCase();
-                const rows = document.querySelectorAll('tbody tr');
+                const rows = document.querySelectorAll('.table-row');
 
                 rows.forEach(row => {
                     const text = row.textContent.toLowerCase();
@@ -483,22 +314,15 @@
                 });
             });
 
-            // Status filter functionality
-            const statusFilter = document.querySelector('select:first-of-type');
-            statusFilter.addEventListener('change', function(e) {
-                const status = e.target.value;
-                const rows = document.querySelectorAll('tbody tr');
+            // Adicionar hover effects
+            const actionButtons = document.querySelectorAll('.action-btn');
+            actionButtons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.1)';
+                });
 
-                rows.forEach(row => {
-                    const statusSpan = row.querySelector('.status-active, .status-inactive, .status-pending');
-                    const rowStatus = statusSpan.classList.contains('status-active') ? 'active' :
-                        statusSpan.classList.contains('status-inactive') ? 'inactive' : 'pending';
-
-                    if (!status || status === rowStatus) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
                 });
             });
         </script>

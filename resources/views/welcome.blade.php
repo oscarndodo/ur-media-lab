@@ -238,7 +238,7 @@
                 <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                     <i class="fas fa-play text-white text-sm"></i>
                 </div>
-                <h1 class="hidden sm:block text-2xl font-bold dark-text">Media Lab</h1>
+                <h1 class="hidden sm:block text-2xl font-bold dark-text">UR MediaLab</h1>
             </div>
 
             <div class="flex items-center gap-4 w-full sm:w-auto">

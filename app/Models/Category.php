@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Video extends Model
+class Category extends Model
 {
     use HasFactory;
 
@@ -14,17 +14,9 @@ class Video extends Model
     public $incrementing = true;
     protected $keyType = 'string';
     protected $fillable = [
-        "title",
-        "description",
-        "category",
-        "status",
-        "views",
+        "name",
+        "color",
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
 
     protected static function boot()

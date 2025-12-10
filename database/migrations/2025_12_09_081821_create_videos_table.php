@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('videos', function (Blueprint $table) {
-            $table->id();
-
+            $table->uuid("id")->primary();
+            $table->foreignUuid("user_id")->constrained('users')->cascadeOnDelete();
+            $table->string("title");
+            $table->longText("description");
+            $table->string("category")->nullable();
+            $table->enum("status", ["private", "public"])->default("private");
+            $table->integer("views")->default(0);
             $table->timestamps();
         });
     }

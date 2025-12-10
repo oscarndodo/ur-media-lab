@@ -57,12 +57,6 @@
                 <span class="sidebar-text">Categorias</span>
             </a>
 
-            <a href="#analytics"
-                class="menu-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 text-gray-300">
-                <i class="fas fa-chart-bar w-5 text-center"></i>
-                <span class="sidebar-text">Analytics</span>
-            </a>
-
             <a href="{{ route('admin.config') }}"
                 class="menu-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 text-gray-300">
                 <i class="fas fa-cog w-5 text-center"></i>
@@ -216,6 +210,7 @@
     </div>
 
 
+    <script src="{{ asset('assets/js/loader.js') }}"></script>
     @stack('scripts')
 </body>
 

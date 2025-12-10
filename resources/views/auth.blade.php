@@ -185,8 +185,11 @@
                     </div>
 
                     <!-- Formulário -->
-                    <form id="loginForm" class="space-y-6">
+                    <form id="loginForm" class="space-y-6" action="{{ route('login.auth') }}" method="POST">
                         <!-- Campo Email -->
+
+                        @csrf
+
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
                                 <div class="flex items-center gap-2">
@@ -197,7 +200,7 @@
                             <div class="relative">
                                 <input type="email" id="email" name="email" required
                                     class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-blue-500 transition-all"
-                                    placeholder="seu@email.com">
+                                    placeholder="seu@email.com" />
                                 <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
                                     <i class="fas fa-user text-gray-400"></i>
                                 </div>
@@ -218,7 +221,7 @@
                                 <label for="password" class="block text-sm font-medium text-gray-700">
                                     <div class="flex items-center gap-2">
                                         <i class="fas fa-lock text-gray-400"></i>
-                                        <span>Palavra-Passe</span>
+                                        <span>Palavra-Passe </span>
                                     </div>
                                 </label>
                                 <a href="#" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">
@@ -228,7 +231,7 @@
                             <div class="relative">
                                 <input type="password" id="password" name="password" required
                                     class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-blue-500 transition-all"
-                                    placeholder="••••••••">
+                                    placeholder="***************" />
                                 <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
                                     <i class="fas fa-key text-gray-400"></i>
                                 </div>
@@ -274,21 +277,6 @@
                     </form>
                 </div>
 
-                <!-- Mensagem de Sucesso (inicialmente oculta) -->
-                <div id="success-message" class="hidden p-8">
-                    <div class="text-center">
-                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i class="fas fa-check text-green-600 text-3xl"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-3">Login bem-sucedido!</h3>
-                        <p class="text-gray-600 mb-8">
-                            Redirecionando para a Biblioteca Digital...
-                        </p>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div id="progress-bar" class="bg-green-600 h-2 rounded-full w-0"></div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Rodapé -->
@@ -302,49 +290,10 @@
         </div>
     </div>
 
-    <!-- Modal de Recuperação de Senha -->
-    <div id="forgot-password-modal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800">Recuperar Senha</h3>
-                <button id="close-modal" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-
-            <p class="text-gray-600 mb-6">
-                Digite seu email abaixo e enviaremos um link para redefinir sua senha.
-            </p>
-
-            <form id="forgot-password-form">
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Email
-                    </label>
-                    <input type="email"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                        placeholder="seu@email.com" required>
-                </div>
-
-                <div class="flex gap-3">
-                    <button type="button" id="cancel-forgot"
-                        class="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="flex-1 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        Enviar Link
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script>
         // Elementos DOM
         const loginSkeleton = document.getElementById('login-skeleton');
         const loginForm = document.getElementById('login-form');
-        const successMessage = document.getElementById('success-message');
         const loginFormElement = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
@@ -354,11 +303,6 @@
         const passwordError = document.getElementById('password-error');
         const loginButton = document.getElementById('login-button');
         const loginText = document.getElementById('login-text');
-        const progressBar = document.getElementById('progress-bar');
-        const forgotPasswordModal = document.getElementById('forgot-password-modal');
-        const closeModalBtn = document.getElementById('close-modal');
-        const cancelForgotBtn = document.getElementById('cancel-forgot');
-        const forgotPasswordForm = document.getElementById('forgot-password-form');
         const themeToggle = document.getElementById('theme-toggle');
 
         // Estado
@@ -374,11 +318,8 @@
                 loginForm.classList.add('fade-in');
             }, 1000);
 
-            // Configurar event listeners
-            setupEventListeners();
 
-            // Verificar se há credenciais salvas
-            checkSavedCredentials();
+
         });
 
         // Configurar event listeners
@@ -400,67 +341,13 @@
 
             // Submissão do formulário
             loginFormElement.addEventListener('submit', function(e) {
-                e.preventDefault();
-                handleLogin();
+                showLoadingState();
             });
 
-            // Links "Esqueceu a senha?"
-            document.querySelectorAll('a[href="#"]').forEach(link => {
-                if (link.textContent.includes('Esqueceu')) {
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        showForgotPasswordModal();
-                    });
-                }
-
-                if (link.textContent.includes('Cadastre-se')) {
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        showRegistrationMessage();
-                    });
-                }
-            });
-
-            // Modal de recuperação de senha
-            closeModalBtn.addEventListener('click', hideForgotPasswordModal);
-            cancelForgotBtn.addEventListener('click', hideForgotPasswordModal);
-
-            forgotPasswordForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                handleForgotPassword();
-            });
-
-            // Fechar modal ao clicar fora
-            forgotPasswordModal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    hideForgotPasswordModal();
-                }
-            });
 
             // Toggle de tema
             themeToggle.addEventListener('click', toggleTheme);
 
-            // Login com Google
-            document.querySelector('button:has(.fa-google)').addEventListener('click', function() {
-                handleSocialLogin('google');
-            });
-
-            // Login com GitHub
-            document.querySelector('button:has(.fa-github)').addEventListener('click', function() {
-                handleSocialLogin('github');
-            });
-        }
-
-        // Verificar credenciais salvas
-        function checkSavedCredentials() {
-            const savedEmail = localStorage.getItem('rememberedEmail');
-            const rememberChecked = localStorage.getItem('rememberMe') === 'true';
-
-            if (savedEmail && rememberChecked) {
-                emailInput.value = savedEmail;
-                document.getElementById('remember').checked = true;
-                validateEmail();
-            }
         }
 
         // Validar email
@@ -494,7 +381,7 @@
                 return false;
             }
 
-            if (password.length >= 6) {
+            if (password.length > 5) {
                 passwordError.classList.add('hidden');
                 return true;
             } else {
@@ -516,57 +403,6 @@
             }
         }
 
-        // Manipular login
-        function handleLogin() {
-            const email = emailInput.value;
-            const password = passwordInput.value;
-            const rememberMe = document.getElementById('remember').checked;
-
-            // Validar campos
-            const isEmailValid = validateEmail();
-            const isPasswordValid = validatePassword();
-
-            if (!isEmailValid || !isPasswordValid) {
-                // Efeito shake nos campos inválidos
-                if (!isEmailValid) {
-                    emailInput.parentElement.classList.add('shake');
-                    setTimeout(() => {
-                        emailInput.parentElement.classList.remove('shake');
-                    }, 500);
-                }
-
-                if (!isPasswordValid) {
-                    passwordInput.parentElement.classList.add('shake');
-                    setTimeout(() => {
-                        passwordInput.parentElement.classList.remove('shake');
-                    }, 500);
-                }
-
-                return;
-            }
-
-            // Salvar credenciais se "Lembrar de mim" estiver marcado
-            if (rememberMe) {
-                localStorage.setItem('rememberedEmail', email);
-                localStorage.setItem('rememberMe', 'true');
-            } else {
-                localStorage.removeItem('rememberedEmail');
-                localStorage.removeItem('rememberMe');
-            }
-
-            // Simular processo de login
-            showLoadingState();
-
-            // Simular requisição ao servidor
-            setTimeout(() => {
-                // Simular login bem-sucedido
-                showSuccessState();
-
-                // Simular redirecionamento
-                simulateRedirect();
-            }, 1500);
-        }
-
         // Mostrar estado de carregamento
         function showLoadingState() {
             loginButton.disabled = true;
@@ -574,83 +410,7 @@
             loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         }
 
-        // Mostrar estado de sucesso
-        function showSuccessState() {
-            loginForm.classList.add('hidden');
-            successMessage.classList.remove('hidden');
-            successMessage.classList.add('fade-in');
-        }
 
-        // Simular redirecionamento
-        function simulateRedirect() {
-            let width = 0;
-            const interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    // Aqui normalmente redirecionaria para a página principal
-                    // window.location.href = 'index.html';
-                    console.log('Redirecionando para a página principal...');
-
-                    // Por enquanto, apenas mostra mensagem
-                    setTimeout(() => {
-                        document.querySelector('#success-message p').textContent =
-                            'Redirecionamento simulado! Na prática, você seria redirecionado para a Biblioteca Digital.';
-                    }, 500);
-                } else {
-                    width += 2;
-                    progressBar.style.width = width + '%';
-                }
-            }, 30);
-        }
-
-        // Mostrar modal de recuperação de senha
-        function showForgotPasswordModal() {
-            forgotPasswordModal.classList.remove('hidden');
-            forgotPasswordModal.classList.add('fade-in');
-        }
-
-        // Ocultar modal de recuperação de senha
-        function hideForgotPasswordModal() {
-            forgotPasswordModal.classList.add('hidden');
-            forgotPasswordModal.classList.remove('fade-in');
-        }
-
-        // Manipular recuperação de senha
-        function handleForgotPassword() {
-            const emailInput = forgotPasswordForm.querySelector('input[type="email"]');
-            const email = emailInput.value;
-
-            if (!email) {
-                emailInput.classList.add('shake');
-                setTimeout(() => {
-                    emailInput.classList.remove('shake');
-                }, 500);
-                return;
-            }
-
-            // Simular envio de email
-            const submitBtn = forgotPasswordForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-
-            setTimeout(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Link Enviado!';
-                submitBtn.classList.add('bg-green-600');
-
-                // Reset após 2 segundos
-                setTimeout(() => {
-                    submitBtn.textContent = originalText;
-                    submitBtn.classList.remove('bg-green-600');
-                    hideForgotPasswordModal();
-
-                    // Mostrar mensagem de sucesso
-                    alert('Link de recuperação enviado para ' + email);
-                }, 2000);
-            }, 1500);
-        }
 
         // Alternar tema claro/escuro
         function toggleTheme() {
@@ -672,112 +432,6 @@
                 icon.classList.add('text-gray-600');
             }
         }
-
-        // Manipular login social
-        function handleSocialLogin(provider) {
-            const button = document.querySelector(`button:has(.fa-${provider})`);
-            const originalText = button.querySelector('span').textContent;
-            const icon = button.querySelector('i');
-
-            // Efeito visual
-            button.disabled = true;
-            button.querySelector('span').textContent = 'Conectando...';
-            icon.classList.add('fa-spinner', 'fa-spin');
-            icon.classList.remove(`fa-${provider}`);
-
-            // Simular conexão
-            setTimeout(() => {
-                button.disabled = false;
-                button.querySelector('span').textContent = originalText;
-                icon.classList.remove('fa-spinner', 'fa-spin');
-                icon.classList.add(`fa-${provider}`);
-
-                // Mostrar mensagem
-                alert(`Login com ${provider} simulado! Na prática, você seria redirecionado para autenticação.`);
-            }, 1500);
-        }
-
-        // Mostrar mensagem de registro
-        function showRegistrationMessage() {
-            // Criar elemento de mensagem
-            const message = document.createElement('div');
-            message.className =
-                'fixed top-4 right-4 bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg z-50 transform translate-x-full opacity-0';
-            message.innerHTML = `
-        <div class="flex items-center gap-3">
-          <i class="fas fa-info-circle text-xl"></i>
-          <div>
-            <p class="font-medium">Página de cadastro em desenvolvimento!</p>
-            <p class="text-sm opacity-90">Por enquanto, use o formulário de login com credenciais de teste.</p>
-          </div>
-          <button class="ml-4 text-white/80 hover:text-white">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      `;
-
-            document.body.appendChild(message);
-
-            // Animar entrada
-            setTimeout(() => {
-                message.classList.remove('translate-x-full', 'opacity-0');
-                message.classList.add('translate-x-0', 'opacity-100');
-            }, 10);
-
-            // Botão de fechar
-            const closeBtn = message.querySelector('button');
-            closeBtn.addEventListener('click', () => {
-                message.classList.remove('translate-x-0', 'opacity-100');
-                message.classList.add('translate-x-full', 'opacity-0');
-                setTimeout(() => {
-                    message.remove();
-                }, 300);
-            });
-
-            // Auto-fechar após 5 segundos
-            setTimeout(() => {
-                if (message.parentNode) {
-                    message.classList.remove('translate-x-0', 'opacity-100');
-                    message.classList.add('translate-x-full', 'opacity-0');
-                    setTimeout(() => {
-                        if (message.parentNode) message.remove();
-                    }, 300);
-                }
-            }, 5000);
-        }
-
-        // Sugestão de credenciais de teste (apenas para demonstração)
-        window.addEventListener('load', function() {
-            // Adicionar dica visual após alguns segundos
-            setTimeout(() => {
-                if (!emailInput.value) {
-                    const hint = document.createElement('div');
-                    hint.className =
-                        'mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800';
-                    hint.innerHTML = `
-            <div class="flex items-start gap-2">
-              <i class="fas fa-lightbulb mt-0.5"></i>
-              <div>
-                <p class="font-medium">Dica para teste:</p>
-                <p>Use "usuario@exemplo.com" e qualquer senha com 6+ caracteres</p>
-              </div>
-            </div>
-          `;
-
-                    emailInput.parentElement.parentElement.appendChild(hint);
-
-                    // Auto-remover após 10 segundos
-                    setTimeout(() => {
-                        if (hint.parentNode) {
-                            hint.classList.add('opacity-0', 'h-0', 'overflow-hidden');
-                            setTimeout(() => {
-                                if (hint.parentNode) hint.remove();
-                            }, 300);
-                        }
-                    }, 10000);
-                }
-            }, 3000);
-        });
     </script>
 </body>
 

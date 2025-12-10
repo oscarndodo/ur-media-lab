@@ -23,6 +23,16 @@ class User extends Authenticatable
         'role'
     ];
 
+    public function bio()
+    {
+        return $this->hasOne(Bio::class);
+    }
+
+
+    public function videos()
+    {
+        return $this->hasMany(Video::class);
+    }
 
     protected static function boot()
     {
