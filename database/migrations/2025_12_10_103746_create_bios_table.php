@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('bios', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
-            $table->string("phone")->nullable();
             $table->string("photo")->nullable();
-            $table->string("num_doc")->nullable();
             $table->longText("description")->nullable();
             $table->string("formation")->nullable();
             $table->string("area")->nullable();

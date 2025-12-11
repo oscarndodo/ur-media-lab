@@ -433,21 +433,6 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="phone" class="form-label required">Telefone</label>
-                            <input type="tel" id="phone" name="phone" class="form-input"
-                                placeholder="Ex: 8# ## ## ###" required>
-                            <div class="error-message" id="phoneError"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="bi" class="form-label">Número de BI</label>
-                            <input type="text" id="bi" name="bi" class="form-input"
-                                placeholder="Ex: 1234567890M">
-                            <div class="error-message" id="biError"></div>
-                        </div>
-                    </div>
 
                     <div class="form-group">
                         <label for="bio" class="form-label">Biografia</label>

@@ -24,13 +24,12 @@ class AdminController extends Controller
         $data = $request->validate([
             "name" => "required|min:3",
             "email" => "required|email",
-            "phone" => "required|min:9",
-            "bi"    => "nullable|min:11",
-            "description" => "required|min:10",
+            "description" => "nullable|min:10",
             "formation" => "required",
             "area" => "required",
             "institute" => "required",
         ]);
+
 
         if (User::where("email", $data["email"])->first()) return Redirect::back()->withErrors(['error' => 'Email em uso.']);
         $user = User::create([
@@ -43,11 +42,9 @@ class AdminController extends Controller
         if (isset($request['file'])) {
             $photo = $request['file']->store("profiles");
         }
-        dd($user->bio);
+
         $user->bio()->create([
-            "phone" => $data['phone'],
             "photo" => $photo ?? null,
-            "num_doc" => $data['bi'],
             "description" => $data['description'],
             "formation" => $data['formation'],
             "area" => $data['area'],

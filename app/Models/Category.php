@@ -11,7 +11,7 @@ class Category extends Model
     use HasFactory;
 
 
-    public $incrementing = true;
+    public $incrementing = false;
     protected $keyType = 'string';
     protected $fillable = [
         "name",

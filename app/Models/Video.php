@@ -11,7 +11,7 @@ class Video extends Model
     use HasFactory;
 
 
-    public $incrementing = true;
+    public $incrementing = false;
     protected $keyType = 'string';
     protected $fillable = [
         "title",

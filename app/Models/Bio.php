@@ -12,14 +12,12 @@ class Bio extends Model
 
 
 
-    public $incrementing = true;
+    public $incrementing = false;
     protected $keyType = 'string';
 
 
     protected $fillable = [
         "phone",
-        "photo",
-        "num_doc",
         "description",
         "formation",
         "area",
