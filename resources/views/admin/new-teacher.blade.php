@@ -365,7 +365,7 @@
                 </a>
                 <h1>
                     <i class="fas fa-user-plus"></i>
-                    Cadastro de Novo Professor
+                    Cadastro de novo Docente
                 </h1>
             </div>
 

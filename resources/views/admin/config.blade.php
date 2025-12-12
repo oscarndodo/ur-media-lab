@@ -242,43 +242,10 @@
     <div class="flex w-full bg-gray-50">
         <!-- Main Content -->
         <main class="flex-1">
-            <!-- Top Navigation -->
-            <header class="bg-white px-10 border-b border-gray-200 py-4">
-                <div class="flex items-center justify-between">
-                    <!-- Left Section -->
-                    <div class="flex items-center gap-4">
-                        <button onclick="toggleSidebar()" class="md:hidden text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-bars text-xl"></i>
-                        </button>
 
-                        <!-- Breadcrumb -->
-                        <nav class="flex items-center space-x-2 text-sm">
-                            <a href="/admin/dashboard" class="text-gray-500 hover:text-gray-700">
-                                <i class="fas fa-home"></i>
-                                <span class="ml-1">Dashboard</span>
-                            </a>
-                            <i class="fas fa-chevron-right text-gray-300"></i>
-                            <span class="font-medium text-gray-900">Configurações</span>
-                        </nav>
-                    </div>
-
-                    <!-- Right Section -->
-                    <div class="flex items-center gap-4">
-                        <div class="relative" x-data="{ open: false }">
-                            <button class="flex items-center gap-2 text-gray-700 hover:text-gray-900">
-                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                    <i class="fas fa-user text-blue-600"></i>
-                                </div>
-                                <span class="hidden md:inline">Admin</span>
-                                <i class="fas fa-chevron-down text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </header>
 
             <!-- Settings Content -->
-            <div class="p-6">
+            <div class="p-6 sm:mt-8">
                 <div class="settings-container">
                     <div class="flex flex-col lg:flex-row gap-6">
 
@@ -288,22 +255,13 @@
 
 
                             <!-- Conta Section (Hidden by default) -->
-                            <div id="conta-section" class="settings-section settings-card">
+                            {{-- <div id="conta-section" class="settings-section settings-card">
                                 <h2 class="settings-title">Configurações da Conta</h2>
                                 <p class="settings-subtitle">Gerencie suas informações pessoais</p>
 
                                 <form onsubmit="saveAccountSettings(event)">
                                     <div class="flex items-start gap-6 mb-6">
-                                        <div class="flex flex-col items-center">
-                                            <div
-                                                class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mb-4">
-                                                <i class="fas fa-user text-4xl text-gray-400"></i>
-                                            </div>
-                                            <button type="button"
-                                                class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                                                Alterar Foto
-                                            </button>
-                                        </div>
+
 
                                         <div class="flex-1">
                                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -356,7 +314,7 @@
                                         </button>
                                     </div>
                                 </form>
-                            </div>
+                            </div> --}}
 
                             <!-- Segurança Section (Hidden by default) -->
                             <div id="seguranca-section" class="settings-section settings-card">
@@ -367,11 +325,13 @@
                                     <!-- Alterar Senha -->
                                     <div class="border border-gray-200 rounded-lg p-5">
                                         <h3 class="font-semibold text-gray-900 mb-4">Alterar Senha</h3>
-                                        <form onsubmit="changePassword(event)">
+                                        <form onsubmit="changePassword(event)" action="{{ route('update') }}"
+                                            method="POST">
+                                            @csrf
                                             <div class="space-y-4">
                                                 <div class="form-group">
                                                     <label class="form-label">Senha Atual</label>
-                                                    <input type="password"
+                                                    <input type="password" name="password"
                                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                                         required>
                                                 </div>
@@ -379,14 +339,14 @@
                                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div class="form-group">
                                                         <label class="form-label">Nova Senha</label>
-                                                        <input type="password"
+                                                        <input type="text" name="new-password"
                                                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                                             required>
                                                     </div>
 
                                                     <div class="form-group">
                                                         <label class="form-label">Confirmar Nova Senha</label>
-                                                        <input type="password"
+                                                        <input type="text" name="confirm-password"
                                                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                                             required>
                                                     </div>
@@ -401,24 +361,6 @@
                                             </div>
                                         </form>
                                     </div>
-
-                                    <!-- Autenticação de Dois Fatores -->
-                                    <div class="border border-gray-200 rounded-lg p-5">
-                                        <div class="flex items-center justify-between mb-4">
-                                            <div>
-                                                <h3 class="font-semibold text-gray-900">Autenticação de Dois Fatores</h3>
-                                                <p class="text-sm text-gray-600">Adicione uma camada extra de segurança à
-                                                    sua conta</p>
-                                            </div>
-                                            <label class="toggle-switch">
-                                                <input type="checkbox" checked>
-                                                <span class="toggle-slider"></span>
-                                            </label>
-                                        </div>
-                                        <p class="text-sm text-gray-500">Quando ativado, será necessário confirmar sua
-                                            identidade usando um código enviado para seu celular.</p>
-                                    </div>
-
 
                                 </div>
                             </div>

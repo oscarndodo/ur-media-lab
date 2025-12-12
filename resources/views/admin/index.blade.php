@@ -38,7 +38,7 @@
         <!-- Menu -->
         <nav class="p-4 space-y-1">
             <a href="{{ route('admin.home') }}"
-                class="menu-item flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-600 text-white">
+                class="menu-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 text-white">
                 <i class="fas fa-tachometer-alt w-5 text-center"></i>
                 <span class="sidebar-text">Dashboard</span>
             </a>
@@ -54,7 +54,7 @@
             <a href="{{ route('admin.categories') }}"
                 class="menu-item flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 text-gray-300">
                 <i class="fas fa-tags w-5 text-center"></i>
-                <span class="sidebar-text">Categorias</span>
+                <span class="sidebar-text">Disciplinas</span>
             </a>
 
             <a href="{{ route('admin.config') }}"
@@ -66,11 +66,11 @@
 
         <!-- Collapse Button -->
         <div class="absolute bottom-4 left-4 right-4">
-            <button id="sidebar-toggle"
-                class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
-                <i class="fas fa-chevron-left"></i>
-                <span class="sidebar-text">Recolher Menu</span>
-            </button>
+            <a href="{{ route('logout') }}" id="sidebar-toggle"
+                class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-800 rounded-lg hover:bg-red-700">
+                <i class="fas fa-sign-out"></i>
+                <span class="sidebar-text">Terminar sessão</span>
+            </a>
         </div>
     </div>
 
@@ -207,10 +207,55 @@
 
         <!-- Dashboard Content -->
         @yield('main')
+
+
+        @error('error')
+            <div role="alert" class="fixed top-5 left-5 alert rounded-md border border-red-500 bg-red-50 p-4 shadow-sm">
+                <div class="flex items-start gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="-mt-0.5 size-6 text-red-700">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"></path>
+                    </svg>
+
+                    <div class="flex-1">
+                        <strong class="block leading-tight font-medium text-red-800"> ERRO </strong>
+
+                        <p class="mt-0.5 text-sm text-red-700">
+                            {{ $message }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @enderror
+
+        @error('success')
+            <div role="alert" class="fixed top-5 left-5 rounded-md border border-green-500 bg-green-50 p-4 shadow-sm">
+                <div class="flex items-start gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="-mt-0.5 size-6 text-green-700">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+
+                    <div class="flex-1">
+                        <strong class="block leading-tight font-medium text-green-800"> SUCESSO </strong>
+
+                        <p class="mt-0.5 text-sm text-green-700">
+                            {{ $message }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @enderror
+
     </div>
 
 
     <script src="{{ asset('assets/js/loader.js') }}"></script>
+    <script>
+        document.querySelectorAll('.alert')
+    </script>
     @stack('scripts')
 </body>
 

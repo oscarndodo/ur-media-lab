@@ -1,7 +1,5 @@
 @extends('admin.index')
 
-
-
 @section('main')
     @push('styles')
         <style>
@@ -120,6 +118,12 @@
         </style>
     @endpush
 
+    @php
+        // Mapa rápido de Disciplinas por nome (para aplicar cor do badge quando existir)
+        $categoryMap = isset($categories) ? $categories->keyBy('name') : collect();
+        $videoGrowthIsUp = ($videoGrowthPct ?? 0) >= 0;
+        $teacherGrowthIsUp = ($teacherGrowthPct ?? 0) >= 0;
+    @endphp
 
     <main class="p-6">
         <!-- Stats Overview -->
@@ -129,10 +133,12 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-500">Total de Vídeos</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mt-1">156</h3>
-                        <p class="text-sm text-green-600 mt-2">
-                            <i class="fas fa-arrow-up mr-1"></i>
-                            12% este mês
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1">{{ number_format($totalVideos ?? 0, 0, ',', '.') }}
+                        </h3>
+
+                        <p class="text-sm mt-2 {{ $videoGrowthIsUp ? 'text-green-600' : 'text-red-600' }}">
+                            <i class="fas {{ $videoGrowthIsUp ? 'fa-arrow-up' : 'fa-arrow-down' }} mr-1"></i>
+                            {{ abs((int) ($videoGrowthPct ?? 0)) }}% este mês
                         </p>
                     </div>
                     <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -141,15 +147,17 @@
                 </div>
             </div>
 
-            <!-- Total Professores -->
+            <!-- Total Docentes -->
             <div class="stat-card bg-white rounded-xl p-6 shadow-sm fade-in" style="animation-delay: 0.1s">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500">Professores</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mt-1">24</h3>
-                        <p class="text-sm text-green-600 mt-2">
-                            <i class="fas fa-arrow-up mr-1"></i>
-                            8% este mês
+                        <p class="text-sm text-gray-500">Docentes</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1">
+                            {{ number_format($totalTeachers ?? 0, 0, ',', '.') }}</h3>
+
+                        <p class="text-sm mt-2 {{ $teacherGrowthIsUp ? 'text-green-600' : 'text-red-600' }}">
+                            <i class="fas {{ $teacherGrowthIsUp ? 'fa-arrow-up' : 'fa-arrow-down' }} mr-1"></i>
+                            {{ abs((int) ($teacherGrowthPct ?? 0)) }}% este mês
                         </p>
                     </div>
                     <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -163,10 +171,11 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-500">Usuários Ativos</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mt-1">1,842</h3>
-                        <p class="text-sm text-green-600 mt-2">
-                            <i class="fas fa-arrow-up mr-1"></i>
-                            5% esta semana
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1">
+                            {{ number_format($activeUsers ?? 0, 0, ',', '.') }}</h3>
+                        <p class="text-sm text-gray-500 mt-2">
+                            <i class="fas fa-users mr-1"></i>
+                            Registos activos
                         </p>
                     </div>
                     <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -180,7 +189,8 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm text-gray-500">Vídeos Pendentes</p>
-                        <h3 class="text-2xl font-bold text-gray-800 mt-1">12</h3>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1">
+                            {{ number_format($pendingVideos ?? 0, 0, ',', '.') }}</h3>
                         <p class="text-sm text-yellow-600 mt-2">
                             <i class="fas fa-clock mr-1"></i>
                             Necessitam revisão
@@ -195,8 +205,6 @@
 
         <!-- Main Content Tabs -->
         <div class=" mb-6">
-
-
             <!-- Tab Content -->
             <div class="p-6">
                 <!-- Dashboard Tab -->
@@ -221,7 +229,7 @@
                                                     Título</th>
                                                 <th
                                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Categoria</th>
+                                                    Disciplina</th>
                                                 <th
                                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     Data</th>
@@ -231,90 +239,106 @@
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-200">
-                                            <tr class="table-row-hover">
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <div class="flex items-center">
-                                                        <div
-                                                            class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded flex items-center justify-center">
-                                                            <i class="fas fa-video text-gray-600"></i>
-                                                        </div>
-                                                        <div class="ml-4">
-                                                            <div class="text-sm font-medium text-gray-900">
-                                                                JavaScript Avançado</div>
-                                                            <div class="text-sm text-gray-500">por Carlos Silva
+                                            @forelse(($latestVideos ?? []) as $video)
+                                                @php
+                                                    $teacherName = optional($video->user)->name ?? '—';
+                                                    $cat = $video->category ?? '—';
+                                                    $catObj = $categoryMap->get($cat);
+                                                    $catColor = $catObj->color ?? '#E5E7EB';
+
+                                                    $status = $video->status ?? 'private';
+                                                    $statusLabel =
+                                                        $status === 'public'
+                                                            ? 'Publicado'
+                                                            : ($status === 'private'
+                                                                ? 'Pendente'
+                                                                : ucfirst($status));
+                                                    $statusClass =
+                                                        $status === 'public'
+                                                            ? 'status-active'
+                                                            : ($status === 'private'
+                                                                ? 'status-pending'
+                                                                : 'status-inactive');
+                                                @endphp
+
+                                                <tr class="table-row-hover">
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <div class="flex items-center">
+                                                            <div
+                                                                class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded flex items-center justify-center">
+                                                                <i class="fas fa-video text-gray-600"></i>
+                                                            </div>
+                                                            <div class="ml-4">
+                                                                <div class="text-sm font-medium text-gray-900">
+                                                                    {{ $video->title ?? '—' }}
+                                                                </div>
+                                                                <div class="text-sm text-gray-500">
+                                                                    por {{ $teacherName }}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <span
-                                                        class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">Programação</span>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    15/06/2023</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <span class="px-2 py-1 text-xs rounded status-active">Publicado</span>
-                                                </td>
-                                            </tr>
-                                            <tr class="table-row-hover">
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <div class="flex items-center">
-                                                        <div
-                                                            class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded flex items-center justify-center">
-                                                            <i class="fas fa-video text-gray-600"></i>
-                                                        </div>
-                                                        <div class="ml-4">
-                                                            <div class="text-sm font-medium text-gray-900">UI
-                                                                Design Moderno</div>
-                                                            <div class="text-sm text-gray-500">por Ana Santos</div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <span
-                                                        class="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Design</span>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    14/06/2023</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <span class="px-2 py-1 text-xs rounded status-pending">Pendente</span>
-                                                </td>
-                                            </tr>
+                                                    </td>
+
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <span class="px-2 py-1 text-xs rounded {{ $catColor }}"
+                                                            style="background-color: {{ $catColor }}; color: #ffffff;">
+                                                            {{ $cat }}
+                                                        </span>
+                                                    </td>
+
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        {{ optional($video->created_at)->format('d/m/Y') }}
+                                                    </td>
+
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <span class="px-2 py-1 text-xs rounded {{ $statusClass }}">
+                                                            {{ $statusLabel }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">
+                                                        Sem vídeos para mostrar.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
                 </div>
 
             </div>
         </div>
     </main>
 
-
-
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script>
+            // Dados vindos do Controller (últimos 12 meses)
+            const chartSeries = @json($chartSeries ?? []);
+            const chartLabels = @json($chartLabels ?? []);
+            const chartIsViews = @json($chartIsViews ?? false);
+
             var options = {
                 series: [{
-                    name: "Visualizações",
-                    data: [10, 41, 35, 51, 49, 62, 69, 91, 148, 432, 212, 34]
+                    name: chartIsViews ? "Visualizações" : "Uploads",
+                    data: chartSeries
                 }],
                 chart: {
                     type: 'area',
                     height: 360,
                     toolbar: {
-                        show: false // remove toolbar (download, zoom, etc.)
+                        show: false
                     },
                     zoom: {
-                        enabled: false // sem zoom
+                        enabled: false
                     },
                     animations: {
-                        enabled: true // sem animações de interação
+                        enabled: true
                     }
                 },
                 dataLabels: {
@@ -324,7 +348,7 @@
                     curve: 'smooth',
                     width: 3
                 },
-                colors: ['#2563eb'], // azul profissional
+                colors: ['#2563eb'],
                 fill: {
                     type: 'gradient',
                     gradient: {
@@ -336,7 +360,7 @@
                     }
                 },
                 title: {
-                    text: 'Visualizações por mês',
+                    text: (chartIsViews ? 'Visualizações' : 'Uploads') + ' por mês',
                     align: 'left',
                     style: {
                         fontSize: '16px',
@@ -356,7 +380,7 @@
                     }
                 },
                 xaxis: {
-                    categories: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    categories: chartLabels,
                     axisBorder: {
                         show: true,
                         color: '#e5e7eb'
@@ -373,7 +397,7 @@
                 yaxis: {
                     labels: {
                         formatter: function(val) {
-                            return val.toFixed(0);
+                            return Number(val).toFixed(0);
                         },
                         style: {
                             fontSize: '11px'
@@ -384,10 +408,9 @@
                     show: true
                 },
                 tooltip: {
-                    enabled: false // sem interação de tooltip
+                    enabled: false
                 }
             };
-
 
             var chart = new ApexCharts(document.querySelector("#chartBox"), options);
             chart.render();

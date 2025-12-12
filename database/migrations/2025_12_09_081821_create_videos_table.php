@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('videos', function (Blueprint $table) {
             $table->uuid("id")->primary();
             $table->foreignUuid("user_id")->constrained('users')->cascadeOnDelete();
+            $table->string("url");
             $table->string("title");
+            $table->string("duration")->nullable();
             $table->longText("description");
             $table->string("category")->nullable();
             $table->enum("status", ["private", "public"])->default("private");

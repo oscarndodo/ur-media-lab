@@ -191,97 +191,102 @@
                     <thead class="table-header">
                         <tr>
                             <th class="px-6 py-4 text-left">Docente</th>
-                            <th class="px-6 py-4 text-left">Especialidade</th>
+                            <th class="px-6 py-4 text-left">Nivel Academico</th>
                             <th class="px-6 py-4 text-left">Vídeos</th>
                             <th class="px-6 py-4 text-left">Status</th>
-                            <th class="px-6 py-4 text-left">Ações</th>
+                            <th class="px-6 py-4 text-left"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Linha 1 -->
-                        <tr class="table-row">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="teacher-avatar">
-                                        CS
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-900">Carlos Silva</p>
-                                        <p class="text-sm text-gray-500">carlos.silva@exemplo.com</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="specialty-tag">
-                                    Língua Inglesa
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="font-medium text-gray-900">8 vídeos</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="status-badge status-active">
-                                    <i class="fas fa-circle text-xs"></i>
-                                    Ativo
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <button class="action-btn action-edit" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn action-view" title="Visualizar">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="action-btn action-delete" title="Desativar">
-                                        <i class="fas fa-user-slash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
 
-                        <!-- Linha 2 -->
-                        <tr class="table-row">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="teacher-avatar"
-                                        style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
-                                        MS
+                        @forelse ($teachers as $key => $item)
+                            <!-- Linha 1 -->
+                            <tr class="table-row">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="teacher-avatar"
+                                            @if ($key % 2 === 1) style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);" @endif>
+                                            <span
+                                                class="uppercase font-bold text-lg">{{ $item->name[0] . $item->name[1] }}</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-gray-900">{{ $item->name }}</p>
+                                            <p class="text-sm text-gray-500">{{ $item->email }}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p class="font-medium text-gray-900">Maria Santos</p>
-                                        <p class="text-sm text-gray-500">maria.santos@exemplo.com</p>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="specialty-tag">
+                                        {{ $item->bio->formation }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="font-medium text-gray-900">{{ $item->videos->count() }} vídeos</span>
+                                </td>
+                                @if ($item->status)
+                                    <td class="px-6 py-4">
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-circle text-xs"></i>
+                                            Activo
+                                        </span>
+                                    </td>
+                                @else
+                                    <td class="px-6 py-4">
+                                        <span class="status-badge status-inactive">
+                                            <i class="fas fa-circle text-xs"></i>
+                                            Inactivo
+                                        </span>
+                                    </td>
+                                @endif
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <a href="{{ route('admin.teacher', $item->id) }}" class="action-btn action-view"
+                                            title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if ($item->status)
+                                            <a href="{{ route('admin.teacher.block', $item->id) }}"
+                                                class="action-btn action-delete" title="Desactivar">
+                                                <i class="fas fa-user-slash"></i>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('admin.teacher.active', $item->id) }}"
+                                                class="action-btn action-delete" title="Activar">
+                                                <i class="fas fa-user-check"></i>
+                                            </a>
+                                        @endif
+                                        <a href="{{ route('admin.teachers.edit', $item->id) }}"
+                                            class="action-btn action-edit" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
                                     </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="specialty-tag" style="background-color: #f3e8ff; color: #7c3aed;">
-                                    Programação
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="font-medium text-gray-900">12 vídeos</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="status-badge status-inactive">
-                                    <i class="fas fa-circle text-xs"></i>
-                                    Inativo
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <button class="action-btn action-edit" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn action-view" title="Visualizar">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="action-btn action-delete" title="Ativar">
-                                        <i class="fas fa-user-check"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-10">
+                                    <div class="flex flex-col items-center justify-center text-gray-500">
+
+                                        <!-- Ícone -->
+                                        <div
+                                            class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+                                            <i class="fas fa-folder-open text-2xl text-gray-400"></i>
+                                        </div>
+
+                                        <!-- Mensagem principal -->
+                                        <p class="text-sm font-medium text-gray-600">Nenhum docente encontrado</p>
+
+                                        <!-- Submensagem -->
+                                        <p class="text-xs text-gray-400 mt-1">A sua tabela ainda não possui docentes para
+                                            mostrar</p>
+
+
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+
                     </tbody>
                 </table>
             </div>

@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Introdução ao HTML - Biblioteca Digital</title>
+    <title>{{ $video->title }} de {{ $video->user->name }}</title>
     @vite('resources/css/app.css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         /* Tema escuro padrão */
         :root {
@@ -202,19 +203,19 @@
     <!-- Header -->
     <header class="w-full border-b dark-bg sticky top-0 z-40 shadow-sm dark-border">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
+            <a href="{{ route('index') }}" class="flex items-center gap-3">
                 <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                     <i class="fas fa-play text-white text-sm"></i>
                 </div>
-                <h1 class="hidden sm:block text-2xl font-bold dark-text">Media Lab</h1>
-            </div>
+                <h1 class="hidden sm:block text-2xl font-bold dark-text">UR MediaLab</h1>
+            </a>
 
             <div class="flex items-center gap-4 w-full sm:w-auto">
-                <div class="relative flex-1 sm:flex-none">
-                    <input type="text" id="search-input" placeholder="Pesquisar vídeos..."
+                <form action="{{ route('guest.search') }}" method="GET" class="relative flex-1 sm:flex-none">
+                    <input type="text" id="search-input" name="q" placeholder="Pesquisar vídeos..."
                         class="px-4 py-2 pl-10 border rounded-lg w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark-input" />
-                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                </div>
+                    <i class="fas fa-search absolute left-3 top-3 dark-text-secondary"></i>
+                </form>
 
                 <!-- Botão para alternar tema -->
                 <button id="theme-toggle" class="p-2 border rounded-lg theme-toggle">
@@ -224,6 +225,9 @@
                 <button id="filter-toggle" class="p-2 border rounded-lg dark-button sm:hidden">
                     <i class="fas fa-search"></i>
                 </button>
+                <a href="{{ route('login') }}" class="p-2 px-4 border rounded-lg dark-button">
+                    <i class="fas fa-user"></i>
+                </a>
             </div>
         </div>
     </header>
@@ -240,36 +244,12 @@
                         <div id="player-skeleton" class="w-full h-full skeleton"></div>
 
                         <!-- Player real (inicialmente oculto) -->
-                        <div id="video-player" class="hidden w-full h-full flex items-center justify-center relative">
-                            <div class="text-center text-white">
-                                <i class="fas fa-play text-5xl mb-4"></i>
-                                <p class="text-xl font-medium">Player de Vídeo</p>
-                                <p class="text-gray-300 mt-2">Introdução ao HTML</p>
-                            </div>
+                        <div id="video-player" class=" w-full h-full flex items-center justify-center relative">
+                            <video width="100%" height="100%" controls>
+                                <source src="{{ asset($video->url) }}" type="video/mp4">
+                                Seu navegador não suporta vídeo.
+                            </video>
 
-                            <!-- Controles do player -->
-                            <div
-                                class="player-controls absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0">
-                                <div class="progress-bar mb-3">
-                                    <div class="progress-fill"></div>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <div class="flex items-center gap-4">
-                                        <button class="text-white hover:text-gray-300">
-                                            <i class="fas fa-play text-lg"></i>
-                                        </button>
-                                        <span class="text-white text-sm">12:00 / 35:00</span>
-                                    </div>
-                                    <div class="flex items-center gap-4">
-                                        <button class="text-white hover:text-gray-300">
-                                            <i class="fas fa-volume-up"></i>
-                                        </button>
-                                        <button class="text-white hover:text-gray-300">
-                                            <i class="fas fa-expand"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -277,7 +257,7 @@
                 <!-- Informações do Vídeo -->
                 <div class="dark-card rounded-xl p-6 shadow-sm mb-6 dark-border">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                        <h1 class="text-2xl font-bold dark-text">Introdução ao HTML</h1>
+                        <h1 class="text-2xl font-bold dark-text">{{ $video->title }}</h1>
                         <div class="flex items-center gap-3">
                             <button
                                 class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
@@ -295,20 +275,20 @@
                     <div class="flex flex-wrap gap-4 mb-6 text-sm dark-text-secondary">
                         <div class="flex items-center gap-2">
                             <i class="fas fa-eye"></i>
-                            <span>2.5K visualizações</span>
+                            <span>{{ $video->views }} visualizações</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fas fa-calendar"></i>
-                            <span>Publicado em 15 Mar 2023</span>
+                            <span>{{ $video->created_at->format('d/m/Y') }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fas fa-clock"></i>
-                            <span>12 minutos</span>
+                            <span>Publicado {{ $video->created_at->diffForHumans() }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <i class="fas fa-tag"></i>
                             <span
-                                class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded dark:bg-blue-900 dark:text-blue-200">Programação</span>
+                                class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded dark:bg-blue-900 dark:text-blue-200">{{ $video->category }}</span>
                         </div>
                     </div>
 
@@ -316,27 +296,21 @@
                     <div class="mb-6">
                         <h3 class="font-semibold dark-text mb-3">Descrição</h3>
                         <p class="dark-text-secondary leading-relaxed">
-                            Aprenda os fundamentos do HTML para criação de páginas web. Este vídeo cobre tags básicas,
-                            estrutura de documentos e boas práticas.
-                            Ideal para quem está começando no desenvolvimento web. Vamos explorar desde os conceitos
-                            mais básicos até a criação de sua primeira página HTML.
+                            {!! $video->description !!}
                         </p>
                     </div>
 
                     <!-- Instrutor -->
                     <div class="border-t pt-6 dark-border">
-                        <h3 class="font-semibold dark-text mb-4">Sobre o Instrutor</h3>
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-gray-400"></i>
-                            </div>
+                        <h3 class="font-semibold dark-text mb-4">Sobre o Docente</h3>
+                        <div class="flex  gap-4">
+                            <img class="w-20 h-20 object-cover border-2 border-blue-200 rounded-full"
+                                src="{{ asset($video->user->bio->photo ?? 'https://www.svgrepo.com/show/420331/avatar-lazybones-sloth.svg') }}"
+                                alt="{{ $video->user->name }}">
                             <div>
-                                <h4 class="font-medium dark-text">Carlos Silva</h4>
-                                <p class="text-sm dark-text-secondary mb-2">Desenvolvedor Frontend com 8 anos de
-                                    experiência</p>
-                                <p class="text-sm dark-text-secondary">
-                                    Especialista em HTML, CSS e JavaScript. Já ministrou mais de 50 cursos online e
-                                    ajudou milhares de estudantes a iniciarem sua jornada no desenvolvimento web.
+                                <h4 class="font-medium dark-text">{{ $video->user->name }}</h4>
+                                <p class="text-sm dark-text-secondary mb-2">
+                                    {!! $video->user->bio->description ?? 'N/A' !!}
                                 </p>
                             </div>
                         </div>
@@ -362,7 +336,7 @@
                     <!-- Lista de comentários -->
                     <div class="space-y-6">
                         <!-- Comentário 1 -->
-                        <div class="border-b pb-6 dark-border">
+                        {{-- <div class="border-b pb-6 dark-border">
                             <div class="flex items-start gap-3 mb-3">
                                 <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
                                     <i class="fas fa-user text-gray-400"></i>
@@ -377,49 +351,23 @@
                                 Obrigada!
                             </p>
                             <div class="flex items-center gap-4 mt-3">
-                                <button
-                                    class="dark-text-secondary hover:text-blue-600 text-sm flex items-center gap-1">
+                                <button class="dark-text-secondary hover:text-blue-600 text-sm flex items-center gap-1">
                                     <i class="far fa-thumbs-up"></i> 12
                                 </button>
                                 <button class="dark-text-secondary hover:text-blue-600 text-sm">
                                     Responder
                                 </button>
                             </div>
-                        </div>
+                        </div> --}}
 
-                        <!-- Comentário 2 -->
-                        <div class="border-b pb-6 dark-border">
-                            <div class="flex items-start gap-3 mb-3">
-                                <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-user text-gray-400"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium dark-text">Pedro Almeida</h4>
-                                    <p class="text-xs dark-text-secondary">Há 1 semana</p>
-                                </div>
-                            </div>
-                            <p class="dark-text-secondary">
-                                Material muito bem estruturado. Gostaria de ver mais vídeos sobre CSS e JavaScript do
-                                mesmo instrutor.
-                            </p>
-                            <div class="flex items-center gap-4 mt-3">
-                                <button
-                                    class="dark-text-secondary hover:text-blue-600 text-sm flex items-center gap-1">
-                                    <i class="far fa-thumbs-up"></i> 8
-                                </button>
-                                <button class="dark-text-secondary hover:text-blue-600 text-sm">
-                                    Responder
-                                </button>
-                            </div>
-                        </div>
+
                     </div>
 
-                    <!-- Ver mais comentários -->
-                    <div class="text-center mt-6">
+                    {{-- <div class="text-center mt-6">
                         <button class="px-6 py-2 border rounded-lg dark-button dark-border">
                             Ver mais comentários
                         </button>
-                    </div>
+                    </div> --}}
                 </div>
             </section>
 
@@ -429,8 +377,12 @@
                     <!-- Playlist atual -->
                     <div class="dark-card rounded-xl p-5 shadow-sm mb-6 dark-border">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-semibold text-lg dark-text">Do mesmo autor</h3>
-                            <span class="text-sm dark-text-secondary">1/8</span>
+                            <h3 class="font-semibold text-lg dark-text"><a href="{{ route('index') }}"
+                                    class="mr-2 font-semibold text-blue-500">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <span>Voltar</span>
+                                </a> Videos do mesmo autor</h3>
+                            <span class="text-sm dark-text-secondary">1/{{ count($related_videos) }}</span>
                         </div>
 
                         <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
@@ -441,11 +393,15 @@
                                         <i class="fas fa-play text-blue-400"></i>
                                     </div>
                                     <div class="flex-1">
-                                        <h4 class="font-medium dark-text text-sm">Introdução ao HTML</h4>
+                                        <h4
+                                            class="font-medium dark-text text-sm w-full text-ellipsis whitespace-nowrap overflow-hidden">
+                                            {{ $video->title }}</h4>
                                         <div class="flex items-center gap-2 mt-1">
-                                            <span class="text-xs dark-text-secondary">12 min</span>
+                                            <span class="text-xs dark-text-secondary">
+                                                {{ \Carbon\CarbonInterval::seconds((int) $video->duration)->cascade()->format('%H:%I:%S') }}
+                                                min</span>
                                             <span
-                                                class="text-xs px-2 py-0.5 bg-green-900 text-green-300 rounded">Atual</span>
+                                                class="text-xs px-2 py-0.5 bg-green-900 text-green-300 rounded">Actual</span>
                                         </div>
                                     </div>
                                 </div>
@@ -464,69 +420,29 @@
                             </div>
 
                             <!-- Vídeos relacionados -->
-                            <div class="playlist-video hidden p-3 rounded-lg border dark-border hover:bg-gray-800 cursor-pointer"
-                                data-video-id="2">
-                                <div class="flex items-center gap-3">
-                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
-                                        alt="Fundamentos de CSS" class="w-16 h-12 object-cover rounded">
-                                    <div class="flex-1">
-                                        <h4 class="font-medium dark-text text-sm">Fundamentos de CSS</h4>
-                                        <div class="flex items-center gap-2 mt-1">
-                                            <span class="text-xs dark-text-secondary">25 min</span>
-                                            <span
-                                                class="text-xs px-2 py-0.5 bg-green-900 text-green-300 rounded">Iniciante</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="playlist-video hidden p-3 rounded-lg border dark-border hover:bg-gray-800 cursor-pointer"
-                                data-video-id="3">
-                                <div class="flex items-center gap-3">
-                                    <img src="https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
-                                        alt="JavaScript para Iniciantes" class="w-16 h-12 object-cover rounded">
-                                    <div class="flex-1">
-                                        <h4 class="font-medium dark-text text-sm">JavaScript para Iniciantes</h4>
-                                        <div class="flex items-center gap-2 mt-1">
-                                            <span class="text-xs dark-text-secondary">42 min</span>
-                                            <span
-                                                class="text-xs px-2 py-0.5 bg-green-900 text-green-300 rounded">Iniciante</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            @foreach ($related_videos as $item)
+                                <div class="playlist-video hidden p-3 rounded-lg border dark-border hover:opacity-50 cursor-pointer"
+                                    data-video-id="2">
+                                    <div class="flex items-center gap-3">
+                                        <a href="{{ route('video', $item->id) }}">
 
-                            <div class="playlist-video hidden p-3 rounded-lg border dark-border hover:bg-gray-800 cursor-pointer"
-                                data-video-id="7">
-                                <div class="flex items-center gap-3">
-                                    <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
-                                        alt="Introdução ao React" class="w-16 h-12 object-cover rounded">
-                                    <div class="flex-1">
-                                        <h4 class="font-medium dark-text text-sm">Introdução ao React</h4>
-                                        <div class="flex items-center gap-2 mt-1">
-                                            <span class="text-xs dark-text-secondary">45 min</span>
-                                            <span
-                                                class="text-xs px-2 py-0.5 bg-yellow-900 text-yellow-300 rounded">Intermediário</span>
-                                        </div>
+                                            <img src="{{ asset('assets/img/video.png') }}" alt="{{ $item->title }}"
+                                                class="w-16 h-12 object-cover rounded border-2">
+                                        </a>
+                                        <a href="{{ route('video', $item->id) }}" class="flex-1">
+                                            <h4 class="font-medium dark-text text-sm">{{ $item->title }}</h4>
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <span class="text-xs dark-text-secondary">
+                                                    {{ \Carbon\CarbonInterval::seconds((int) $item->duration)->cascade()->format('%H:%I:%S') }}
+                                                    min</span>
+                                                <span
+                                                    class="text-xs px-2 py-0.5 bg-green-900 text-green-300 rounded">{{ $item->category }}</span>
+                                            </div>
+                                        </a>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="playlist-video hidden p-3 rounded-lg border dark-border hover:bg-gray-800 cursor-pointer"
-                                data-video-id="11">
-                                <div class="flex items-center gap-3">
-                                    <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
-                                        alt="Vue.js do Zero" class="w-16 h-12 object-cover rounded">
-                                    <div class="flex-1">
-                                        <h4 class="font-medium dark-text text-sm">Vue.js do Zero</h4>
-                                        <div class="flex items-center gap-2 mt-1">
-                                            <span class="text-xs dark-text-secondary">40 min</span>
-                                            <span
-                                                class="text-xs px-2 py-0.5 bg-yellow-900 text-yellow-300 rounded">Intermediário</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
 
@@ -550,26 +466,55 @@
 
                             <!-- Vídeos relacionados reais -->
                             <div class="related-video hidden">
-                                <a href="#" class="group">
-                                    <div class="relative overflow-hidden rounded-lg mb-3">
-                                        <img src="https://images.unsplash.com/photo-1558655146-364adaf1fcc9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                                            alt="Design Responsivo"
-                                            class="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300">
-                                        <div
-                                            class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                                            28 min
+                                @forelse ($other_related as $item)
+                                    <a href="{{ route('video', $item->id) }}" class="group block">
+                                        <div class="relative overflow-hidden rounded-lg mb-3">
+
+                                            {{-- Thumbnail com fallback --}}
+                                            <img src="{{ $item->thumbnail ?? asset('images/default-thumbnail.jpg') }}"
+                                                alt="{{ $item->title }}"
+                                                class="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-105">
+
+                                            {{-- Duração (opcional) --}}
+                                            @if (!empty($item->duration))
+                                                <div
+                                                    class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                                    {{ $item->duration ?? 'N/A' }}
+                                                </div>
+                                            @endif
                                         </div>
-                                    </div>
-                                    <h4 class="font-medium dark-text group-hover:text-blue-400">Design Responsivo
-                                        com CSS</h4>
-                                    <p class="text-sm dark-text-secondary mt-1">Crie sites que se adaptam a qualquer
-                                        dispositivo</p>
-                                    <div class="flex items-center gap-2 mt-2">
-                                        <span class="text-xs dark-text-secondary">Design</span>
-                                        <span
-                                            class="text-xs px-2 py-0.5 bg-yellow-900 text-yellow-300 rounded">Intermediário</span>
-                                    </div>
-                                </a>
+
+                                        {{-- Título --}}
+                                        <h4 class="font-medium dark-text group-hover:text-blue-400 line-clamp-2">
+                                            {{ $item->title }}
+                                        </h4>
+
+                                        {{-- Pequena descrição --}}
+                                        <p class="text-sm dark-text-secondary mt-1 line-clamp-2">
+                                            {{ $item->description ?? 'Sem descrição disponível.' }}
+                                        </p>
+
+                                        <div class="flex items-center gap-2 mt-2">
+                                            {{-- Categoria --}}
+                                            @if (!empty($item->category))
+                                                <span class="text-xs dark-text-secondary">
+                                                    {{ ucfirst($item->category) }}
+                                                </span>
+                                            @endif
+
+                                            {{-- Nível (opcional) --}}
+                                            @if (!empty($item->level))
+                                                <span class="text-xs px-2 py-0.5 bg-blue-900 text-blue-300 rounded">
+                                                    {{ ucfirst($item->level) }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </a>
+
+                                @empty
+                                    <p class="text-gray-500 text-sm">Nenhum vídeo relacionado encontrado.</p>
+                                @endforelse
+
                             </div>
 
                         </div>

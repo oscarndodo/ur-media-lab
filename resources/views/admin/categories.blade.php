@@ -114,15 +114,15 @@
         <!-- Header Section -->
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Gestão de Categorias</h1>
-                <p class="text-gray-600 mt-1">Organize os conteúdos por categorias e subcategorias</p>
+                <h1 class="text-2xl font-bold text-gray-900">Gestão de disciplinas</h1>
+                <p class="text-gray-600 mt-1">Organize as disciplinas para gestao de conteudos</p>
             </div>
             <div class="flex gap-3">
 
                 <button id="addCategoryBtn"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium flex items-center gap-2 transition-all duration-200">
                     <i class="fas fa-plus"></i>
-                    <span>Nova Categoria</span>
+                    <span>Nova Disciplina</span>
                 </button>
             </div>
         </div>
@@ -138,7 +138,7 @@
                                 Ordem
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Categoria
+                                Disciplina
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Cor
@@ -154,7 +154,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200" id="sortableCategories">
 
-                        @forelse ($categories as $item)
+                        @forelse ($categories as $key => $item)
                             <!-- Category 1 -->
                             <tr class="table-row-hover hover:bg-gray-50 transition-colors duration-150 sortable-item"
                                 data-id="1">
@@ -163,7 +163,7 @@
                                         <span class="drag-handle text-gray-400 cursor-move">
                                             <i class="fas fa-grip-vertical"></i>
                                         </span>
-                                        <span class="text-sm text-gray-500">1</span>
+                                        <span class="text-sm text-gray-500">{{ $key + 1 }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
@@ -261,10 +261,10 @@
                                             </div>
 
                                             <!-- Mensagem principal -->
-                                            <p class="text-sm font-medium text-gray-600">Nenhuma categoria encontrado</p>
+                                            <p class="text-sm font-medium text-gray-600">Nenhuma Disciplina encontrado</p>
 
                                             <!-- Submensagem -->
-                                            <p class="text-xs text-gray-400 mt-1">A sua tabela ainda não possui categorias para
+                                            <p class="text-xs text-gray-400 mt-1">A sua tabela ainda não possui Disciplinas para
                                                 mostrar</p>
 
 
@@ -289,7 +289,7 @@
                                 <span class="font-medium">{{ $categories->lastItem() }}</span>
                                 de
                                 <span class="font-medium">{{ $categories->total() }}</span>
-                                categorias
+                                Disciplinas
                             </div>
 
                             <!-- Botões -->
@@ -340,14 +340,14 @@
                 class="bg-white rounded-xl max-w-2xl modal-enter">
                 @csrf
                 <div class="border-b border-gray-200 p-6">
-                    <h2 class="text-xl font-semibold text-gray-900">Nova Categoria</h2>
-                    <p class="text-gray-600 mt-1">Adicione uma nova categoria ao sistema</p>
+                    <h2 class="text-xl font-semibold text-gray-900">Nova Disciplina</h2>
+                    <p class="text-gray-600 mt-1">Adicione uma nova Disciplina ao sistema</p>
                 </div>
 
                 <div class="p-6">
                     <div id="addCategoryForm" class="space-y-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Nome da Categoria</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nome da Disciplina</label>
                             <input type="text" name="name"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
                                 placeholder="Ex: Design, Programação, etc.">
@@ -472,7 +472,7 @@
                     </button>
                     <button
                         class="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">
-                        Criar Categoria
+                        Criar Disciplina
                     </button>
                 </div>
             </form>

@@ -17,7 +17,7 @@ class Bio extends Model
 
 
     protected $fillable = [
-        "phone",
+        "photo",
         "description",
         "formation",
         "area",
